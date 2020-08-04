@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { StyleSheet } from "react-native";
-import { createStore, combineReducers } from "redux";
+import { createStore, combineReducers, applyMiddleware } from "redux";
 import { Provider } from "react-redux";
 import ProductReducer from "./store/reducers/products";
 import ShopNavigator from "./navigation/ShopNavigator";
@@ -8,13 +8,14 @@ import { AppLoading } from "expo";
 import * as Font from "expo-font";
 import CartReducer from "./store/reducers/cart";
 import OrdersReducer from "./store/reducers/orders";
+import ReduxThunk from "redux-thunk";
 
 const rootReducer = combineReducers({
   products: ProductReducer,
   cart: CartReducer,
   orders: OrdersReducer,
 });
-const store = createStore(rootReducer);
+const store = createStore(rootReducer, applyMiddleware(ReduxThunk));
 const fetchFonts = () => {
   return Font.loadAsync({
     "popins-medium": require("./assets/fonts/poppins-medium-webfont.ttf"),

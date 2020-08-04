@@ -21,18 +21,7 @@ const ProductItem = (props) => {
           <Text style={styles.title}>{title}</Text>
           <Text style={styles.price}> $ {price.toFixed(2)}</Text>
         </View>
-        <View style={styles.actions}>
-          <Button
-            color="#bf1557"
-            title="View Details"
-            onPress={props.onViewDetails}
-          />
-          <Button
-            color="#bf1557"
-            title="Add To Cart"
-            onPress={props.onAddToCart}
-          />
-        </View>
+        <View style={styles.actions}>{props.children}</View>
       </View>
     </TouchableOpacity>
   );

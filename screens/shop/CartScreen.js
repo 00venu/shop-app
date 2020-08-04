@@ -33,6 +33,7 @@ const CartScreen = (props) => {
             title="Order Now"
             onPress={() => {
               dispatch(addOrder(cartItems, totalAmount));
+              props.navigation.navigate("Orders");
             }}
           />
         </View>
