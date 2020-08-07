@@ -35,20 +35,12 @@ export const setProduct = () => {
 
 export const deleteProduct = (productId) => {
   return async (dispatch) => {
-    const response = await fetch(
+    await fetch(
       `https://shop-app-a5e92.firebaseio.com/products/${productId}.json`,
       {
         method: "DELETE",
       }
     );
-
-    if (!response.ok) {
-      const errData = await response.json();
-      let errorMsg = errData.error;
-      console.log(errorMsg);
-      throw new Error(errorMsg);
-    }
-
     dispatch({
       type: DELETE_PRODUCT,
       pid: productId,
@@ -57,10 +49,9 @@ export const deleteProduct = (productId) => {
 };
 
 export const createProduct = (title, imageUrl, description, price) => {
-  return async (dispatch, getState) => {
-    const token = getState().auth.token;
+  return async (dispatch) => {
     const response = await fetch(
-      `https://shop-app-a5e92.firebaseio.com/products.json?auth=${token}`,
+      "https://shop-app-a5e92.firebaseio.com/products.json",
       {
         method: "POST",
         headers: {
@@ -69,13 +60,6 @@ export const createProduct = (title, imageUrl, description, price) => {
         body: JSON.stringify({ title, imageUrl, description, price }),
       }
     );
-    if (!response.ok) {
-      const errData = await response.json();
-      let errorMsg = errData.error;
-      // console.log(errData);
-      throw new Error(errorMsg);
-    }
-
     const resData = await response.json();
 
     dispatch({
@@ -92,27 +76,15 @@ export const createProduct = (title, imageUrl, description, price) => {
 };
 
 export const updateProduct = (id, title, imageUrl, description) => {
-  return async (dispatch, getState) => {
-    const token = getState().auth.token;
-    // console.log(getState());
-    const response = await fetch(
-      `https://shop-app-a5e92.firebaseio.com/products/${id}.json?auth=${token}`,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ title, imageUrl, description }),
-      }
-    );
+  return async (dispatch) => {
+    await fetch(`https://shop-app-a5e92.firebaseio.com/products/${id}.json`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ title, imageUrl, description }),
+    });
 
-    if (!response.ok) {
-      const errData = await response.json();
-      let errorMsg = errData.error;
-      throw new Error(errorMsg);
-    }
-    const resData = await response.json();
-    console.log(resData);
     dispatch({
       type: UPDATE_PRODUCT,
       pid: id,

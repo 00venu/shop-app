@@ -14,6 +14,7 @@ import { addToCart } from "../../store/actions/cart";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import HeaderButton from "../../components/UI/HeaderButton";
 import { setProduct } from "../../store/actions/products";
+//import { dataTest } from "../../store/reducers/auth";
 
 const ProductsOverviewScreen = (props) => {
   const products = useSelector((state) => state.products.availableProducts);
@@ -30,7 +31,6 @@ const ProductsOverviewScreen = (props) => {
   };
   const [isLoading, setIsLoading] = useState(false);
   const [errMsg, setErrMsg] = useState(null);
-
   useEffect(() => {
     const loadingProducts = async () => {
       setIsLoading(true);
@@ -65,7 +65,7 @@ const ProductsOverviewScreen = (props) => {
       </View>
     );
   }
-
+  //console.log(dataTest);
   return (
     <View style={styles.screen}>
       <FlatList

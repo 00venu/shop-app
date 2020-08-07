@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { FlatList, Button, Alert, StyleSheet } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
@@ -8,6 +8,7 @@ import ProductItem from "./../../components/shop/ProductItem";
 import { deleteProduct } from "../../store/actions/products";
 
 const UserProductsScreen = (props) => {
+  const [error, setError] = useState(null);
   const userProducts = useSelector((state) => state.products.userProducts);
   const dispatch = useDispatch();
   const editProductHandler = (id) => {
@@ -15,16 +16,28 @@ const UserProductsScreen = (props) => {
       prodictId: id,
     });
   };
-  const deleteHandler = (id) => {
+
+  const deleteHandler = async (id) => {
+    setError(null);
+    try {
+      const rmProduct = await dispatch(deleteProduct(id));
+    } catch (err) {
+      setError(err.message);
+    }
     Alert.alert("Are you sure?", "Do you want to delete the product?", [
       { text: "No", style: "default" },
       {
         text: "Yes",
         style: "destructive",
-        onPress: () => dispatch(deleteProduct(id)),
+        onPress: () => rmProduct,
       },
     ]);
   };
+  useEffect(() => {
+    if (error) {
+      Alert.alert("Alert!", error, [{ text: "Okay" }]);
+    }
+  }, [error]);
   return (
     <FlatList
       data={userProducts}

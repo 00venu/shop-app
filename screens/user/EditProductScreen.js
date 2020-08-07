@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useReducer } from "react";
+import React, { useEffect, useCallback, useReducer, useState } from "react";
 import {
   View,
   ScrollView,
@@ -38,6 +38,7 @@ const formReducer = (state, action) => {
 };
 
 const EditProductScreen = (props) => {
+  const [error, setError] = useState(null);
   const prodId = props.navigation.getParam("prodictId");
 
   const userProducts = useSelector((state) =>
@@ -60,40 +61,52 @@ const EditProductScreen = (props) => {
   });
   const dispatch = useDispatch();
   //console.log(formState.formIsValid);
-  const submitHandler = useCallback(() => {
+  const submitHandler = useCallback(async () => {
     if (!formState.formIsValid) {
       Alert.alert("Wrong Input", "Please check the error in input", [
         { text: "Okay" },
       ]);
       return;
     }
+    setError(null);
 
-    if (userProducts) {
-      dispatch(
-        updateProduct(
-          prodId,
-          formState.inputValues.title,
-          formState.inputValues.imageUrl,
-          formState.inputValues.desc
-        )
-      );
-    } else {
-      //title, imageUrl, description, price
-      dispatch(
-        createProduct(
-          formState.inputValues.title,
-          formState.inputValues.imageUrl,
-          formState.inputValues.desc,
-          +formState.inputValues.price
-        )
-      );
+    try {
+      if (userProducts) {
+        await dispatch(
+          updateProduct(
+            prodId,
+            formState.inputValues.title,
+            formState.inputValues.imageUrl,
+            formState.inputValues.desc
+          )
+        );
+      } else {
+        //title, imageUrl, description, price
+        await dispatch(
+          createProduct(
+            formState.inputValues.title,
+            formState.inputValues.imageUrl,
+            formState.inputValues.desc,
+            +formState.inputValues.price
+          )
+        );
+      }
+      props.navigation.goBack();
+    } catch (err) {
+      console.log(err.message);
+      setError(err.message);
     }
-    props.navigation.goBack();
-  }, [dispatch, prodId, formState]);
+  }, [dispatch, prodId, formState, error]);
 
   useEffect(() => {
     props.navigation.setParams({ submit: submitHandler });
   }, [submitHandler]);
+
+  useEffect(() => {
+    if (error) {
+      Alert.alert("Alert!", error, [{ text: "Okay" }]);
+    }
+  }, [error]);
 
   const inputChangeHandler = (inputIdentifier, text) => {
     let isValid = false;
