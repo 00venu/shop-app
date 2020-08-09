@@ -30,6 +30,13 @@ const OrdersScreen = (props) => {
       </View>
     );
   }
+  if (ordersList.length === 0) {
+    return (
+      <View style={styles.noOrders}>
+        <Text>Orders not found. Please order some.</Text>
+      </View>
+    );
+  }
 
   return (
     <FlatList
@@ -38,6 +45,17 @@ const OrdersScreen = (props) => {
     />
   );
 };
+
+const styles = StyleSheet.create({
+  noOrders: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    fontFamily: "popins-medium",
+    fontSize: 14,
+  },
+});
+
 OrdersScreen.navigationOptions = (navData) => {
   return {
     headerTitle: "Your Orders",

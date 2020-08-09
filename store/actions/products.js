@@ -5,7 +5,8 @@ export const UPDATE_PRODUCT = "UPDATE_PRODUCT";
 export const SET_PRODUCT = "SET_PRODUCT";
 
 export const setProduct = () => {
-  return async (dispatch) => {
+  return async (dispatch, getState) => {
+    const userId = getState().auth.userId;
     const response = await fetch(
       "https://shop-app-a5e92.firebaseio.com/products.json"
     );
@@ -17,7 +18,7 @@ export const setProduct = () => {
       getProducts.push(
         new Product(
           key,
-          "u1",
+          resData[key].ownerId,
           resData[key].title,
           resData[key].imageUrl,
           resData[key].description,
@@ -29,14 +30,16 @@ export const setProduct = () => {
     dispatch({
       type: SET_PRODUCT,
       products: getProducts,
+      userProducts: getProducts.filter((product) => product.ownerId === userId),
     });
   };
 };
 
 export const deleteProduct = (productId) => {
-  return async (dispatch) => {
+  return async (dispatch, getState) => {
+    const token = getState().auth.token;
     const response = await fetch(
-      `https://shop-app-a5e92.firebaseio.com/products/${productId}.json`,
+      `https://shop-app-a5e92.firebaseio.com/products/${productId}.json?auth=${token}`,
       {
         method: "DELETE",
       }
@@ -59,6 +62,7 @@ export const deleteProduct = (productId) => {
 export const createProduct = (title, imageUrl, description, price) => {
   return async (dispatch, getState) => {
     const token = getState().auth.token;
+    const userId = getState().auth.userId;
     const response = await fetch(
       `https://shop-app-a5e92.firebaseio.com/products.json?auth=${token}`,
       {
@@ -66,7 +70,13 @@ export const createProduct = (title, imageUrl, description, price) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ title, imageUrl, description, price }),
+        body: JSON.stringify({
+          title,
+          imageUrl,
+          description,
+          price,
+          ownerId: userId,
+        }),
       }
     );
     if (!response.ok) {
@@ -86,6 +96,7 @@ export const createProduct = (title, imageUrl, description, price) => {
         imageUrl,
         description,
         price,
+        ownerId: userId,
       },
     });
   };

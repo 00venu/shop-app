@@ -10,7 +10,7 @@ import Product from "./../../models/product";
 
 const initialState = {
   availableProducts: PRODUCTS,
-  userProducts: PRODUCTS.filter((product) => product.ownerId === "u1"),
+  userProducts: [],
 };
 
 const ProductReducer = (state = initialState, action) => {
@@ -19,13 +19,13 @@ const ProductReducer = (state = initialState, action) => {
       return {
         ...state,
         availableProducts: state.availableProducts.concat(action.products),
-        userProducts: state.userProducts.concat(action.products),
+        userProducts: state.userProducts.concat(action.userProducts),
       };
 
     case CREATE_PRODUCT:
       const createProduct = new Product(
         action.productData.id,
-        "u1",
+        action.productData.ownerId,
         action.productData.title,
         action.productData.imageUrl,
         action.productData.description,
